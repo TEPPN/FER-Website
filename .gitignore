@@ -1,0 +1,9 @@
+dataset/
+dataset/test/
+dataset/train/
+
+*.jpg
+*.jpeg
+*.png
+
+*.h5
