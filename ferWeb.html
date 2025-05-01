@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Face Emotion Detector</title>
+</head>
+<body>
+    <h1>Face Emotion Detector</h1>
+    <video id="video" width="640" height="480" autoplay></video>
+    <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
+    <p>Emotion: <span id="emotion">Detecting...</span></p>
+
+    <script>
+        const video = document.getElementById('video');
+        const emotionText = document.getElementById('emotion');
+
+        // Ask browser for webcam access
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then((stream) => {
+                video.srcObject = stream;
+            })
+            .catch((err) => {
+                console.error('Camera access denied:', err);
+                emotionText.innerText = 'Camera access denied.';
+            });
+
+        // Optional: send frame to backend every 1 second
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        setInterval(() => {
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const imageData = canvas.toDataURL('image/jpeg');
+            
+            fetch('http://localhost:5000/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ image: imageData })
+            })
+            .then(response => response.json())
+            .then(data => {
+                emotionText.innerText = data.emotion;
+            })
+            .catch(err => {
+                console.error('Prediction error:', err);
+            });
+        }, 1000);
+    </script>
+</body>
+</html>
