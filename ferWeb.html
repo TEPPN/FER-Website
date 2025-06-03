@@ -2,19 +2,21 @@
 <html>
 <head>
     <title>Face Emotion Detector</title>
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body>
-    <h1>Face Emotion Detector</h1>
-    <video id="video" width="640" height="480" autoplay></video>
+    <h1 class="font-bold text-4xl text-center mb-6">Face Emotion Detector</h1>
+    <div class="flex justify-center items-center w-full mt-6">
+        <video id="video" class="my-4" width="640" height="480" autoplay></video>
+    </div>
     <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
-    <p>Emotion: <span id="emotion">Detecting...</span></p>
-    <div id="emotion-breakdown"></div>
+    <p class="flex justify-center mb-10 text-2xl">Emotion: <span id="emotion">Detecting...</span></p>
+    <div class="flex flex-row gap-10 justify-center items-center flex-wrap" id="emotion-breakdown"></div>
 
     <script>
         const video = document.getElementById('video');
         const emotionText = document.getElementById('emotion');
 
-        // Ask browser for webcam access
         navigator.mediaDevices.getUserMedia({ video: true })
             .then((stream) => {
                 video.srcObject = stream;
@@ -49,7 +51,23 @@
                 if (data.confidence) {
                     for (const [emotion, confidence] of Object.entries(data.confidence)) {
                         const p = document.createElement('p');
-                        p.innerText = `${emotion}: ${confidence}`;
+                        const confidenceValue = parseFloat(confidence);
+                        
+                        let bgColorClass = '';
+                        if (confidenceValue >= 80) {
+                            bgColorClass = 'bg-red-500';
+                        } else if (confidenceValue >= 60) {
+                            bgColorClass = 'bg-orange-400';
+                        } else if (confidenceValue >= 40) {
+                            bgColorClass = 'bg-yellow-300';
+                        } else if (confidenceValue >= 20) {
+                            bgColorClass = 'bg-green-300';
+                        } else {
+                            bgColorClass = 'bg-blue-200';
+                        }
+
+                        p.className = `px-4 py-2 rounded-lg ${bgColorClass} text-black font-bold m-2`;
+                        p.innerText = `${emotion}: ${confidenceValue.toFixed(2)}%`;
                         breakdownDiv.appendChild(p);
                     }
                 }
