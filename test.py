@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 from tensorflow import keras
-model = keras.models.load_model('model_file_100epochs.h5')
+model = keras.models.load_model('model_fer_100epochs.h5')
 
 video = cv2.VideoCapture(0)
 

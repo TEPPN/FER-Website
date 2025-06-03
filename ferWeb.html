@@ -8,6 +8,7 @@
     <video id="video" width="640" height="480" autoplay></video>
     <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
     <p>Emotion: <span id="emotion">Detecting...</span></p>
+    <div id="emotion-breakdown"></div>
 
     <script>
         const video = document.getElementById('video');
@@ -41,6 +42,17 @@
             .then(response => response.json())
             .then(data => {
                 emotionText.innerText = data.emotion;
+                
+                const breakdownDiv = document.getElementById('emotion-breakdown');
+                breakdownDiv.innerHTML = '';  // clear previous results
+
+                if (data.confidence) {
+                    for (const [emotion, confidence] of Object.entries(data.confidence)) {
+                        const p = document.createElement('p');
+                        p.innerText = `${emotion}: ${confidence}`;
+                        breakdownDiv.appendChild(p);
+                    }
+                }
             })
             .catch(err => {
                 console.error('Prediction error:', err);

@@ -9,18 +9,17 @@ app = Flask(__name__)
 CORS(app)  # Allow cross-origin requests from HTML page
 
 # Load your model and face detector
-model = keras.models.load_model('model_file_100epochs.h5')
+model = keras.models.load_model('fer_30epochs3.h5')
 face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 
 # Emotion label dictionary
 label_dict = {
     0: 'Angry',
-    1: 'Disgust',
-    2: 'Fear',
-    3: 'Happy',
-    4: 'Neutral',
-    5: 'Sad',
-    6: 'Surprise'
+    1: 'Fear',
+    2: 'Happy',
+    3: 'Neutral',
+    4: 'Sad',
+    5: 'Surprise'
 }
 
 @app.route('/predict', methods=['POST'])
@@ -47,11 +46,19 @@ def predict():
     normalized = resized / 255.0
     reshaped = np.reshape(normalized, (1, 48, 48, 1))
 
-    result = model.predict(reshaped)
-    label = np.argmax(result, axis=1)[0]
+    result = model.predict(reshaped)[0]
+    label = np.argmax(result)
     emotion = label_dict[label]
 
-    return jsonify({'emotion': emotion})
+    confidence_dict = {
+        label_dict[i]: f"{round(prob * 100, 2)}%" for i, prob in enumerate(result)
+    }
+
+
+    return jsonify({
+        'emotion': emotion,
+        'confidence': confidence_dict
+    })
 
 if __name__ == '__main__':
     app.run(debug=True)

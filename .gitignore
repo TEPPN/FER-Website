@@ -6,4 +6,9 @@ dataset/train/
 *.jpeg
 *.png
 
-*.h5
+
+model_fer_30epochs2.h5
+model_fer_70epochs.h5
+model_fer_100epochs.h5
+model_file_30epochs.h5
+model_file_100epochs.h5
