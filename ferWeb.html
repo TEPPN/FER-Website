@@ -26,7 +26,6 @@
                 emotionText.innerText = 'Camera access denied.';
             });
 
-        // Optional: send frame to backend every 1 second
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
 
@@ -46,7 +45,7 @@
                 emotionText.innerText = data.emotion;
                 
                 const breakdownDiv = document.getElementById('emotion-breakdown');
-                breakdownDiv.innerHTML = '';  // clear previous results
+                breakdownDiv.innerHTML = ''; 
 
                 if (data.confidence) {
                     for (const [emotion, confidence] of Object.entries(data.confidence)) {
